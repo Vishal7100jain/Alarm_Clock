@@ -57,67 +57,147 @@ AddBtn.addEventListener('click', () => {
 });
 
 
-//done button functionalty 
+function loadAlarmTimesFromLocalStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        if (key.startsWith("Alarm")) {
+            let alarmTime = localStorage.getItem(key);
+            var div = document.createElement('div');
+            div.setAttribute('class', "DivAlarm");
+            div.innerHTML = alarmTime;
+        }
+    }
+}
+
+// Call the function when the page loads
+window.addEventListener('load', loadAlarmTimesFromLocalStorage);
+
+// //done button functionalty 
 DoneBtn.addEventListener('click', () => {
-    //logic to add and display the setted alarm
-    let alarmHour = alarm.value.split(":")[0]
-    let alarmmin = alarm.value.split(":")[1]
-    
+    // Get the alarm hour and minute
+    let alarmHour = alarm.value.split(":")[0];
+    let alarmMinute = alarm.value.split(":")[1];
+
+    // Store the alarm time in local storage
+    let alarmKey = `Alarm${Alarmnum}`;
+    localStorage.setItem(alarmKey, `${alarmHour}:${alarmMinute}`);
+
+
     //Main Div
     var MainDiv = document.createElement('div')
     MainDiv.setAttribute('class', "Alarm")
-    
-    //Time showing Div
+
+    //Time showing Divś
     let div = document.createElement('div')
     div.setAttribute('class', "DivAlarm")
     ++Alarmnum
     div.setAttribute('id', `Alarm${Alarmnum}`)
-    div.innerHTML = `${alarmHour}:${alarmmin}`
-    
+    // Store the alarm time in local storage
+
+    // Update the latest alarm time
+    let latestAlarmDiv = document.getElementById(`Alarm${Alarmnum}`);
+    let latestAlarmTime = `${alarmHour}:${alarmMinute}`;
+    latestAlarmDiv.innerHTML = latestAlarmTime;
+
+
     //removing Button Div
     var button = document.createElement('button')
     button.setAttribute('class', "RemoveSettedAlarm")
     button.setAttribute('id', `${Alarmnum}`)
     button.innerHTML = `<i class="fa-solid fa-minus"></i>`
-    
+
     // Giving position to a setted Alarm
     let SetAlarm = document.getElementsByClassName('SetAlarm')[0]
     SetAlarm.appendChild(MainDiv)
     MainDiv.appendChild(div)
     MainDiv.appendChild(button)
-    alarmarry.push(div.innerHTML)
     //To delete the div if alarm is not setted
     if (div.innerHTML == ":undefined" && button.innerHTML == `<i class="fa-solid fa-minus"></i>`) {
         MainDiv.remove()
     }
-    
+
     button.addEventListener('click', () => {
         MainDiv.remove()
         alarmarry.pop()
     })
-    setTimeout(()=>{
+    setTimeout(() => {
         alarm.value = ''
-    },1000)
-    
+    }, 1000)
+
     //color changing whenever Done button is click
     DoneBtn.style.backgroundColor = "#3edc3e7d"
     setTimeout(() => {
         DoneBtn.style.backgroundColor = "#3edc3e";
     }, 100);
-    
+
     setTimeout(() => {
         // show the Stop watch
         StopWatchPage.style.display = "none";
-        
+
         // hide the AddingAlarm element
         AddingAlarm.style.display = "none";
-        
+
         //show container element
         container.style.display = "grid";
         mainContainer.style.background = "white"
     }, 500)
+
 })
 
+
+
+//Changing bg when Buttons(Stop, Start, Reset) is clicked
+let logicBtn = document.getElementsByClassName('logicBtn')
+Array.from(logicBtn).forEach((logicBtn) => {
+    logicBtn.addEventListener('click', (e) => {
+        e.target.style.backgroundColor = "#cdc3c3"
+        setTimeout(() => {
+            e.target.style.backgroundColor = "white"
+        }, 100)
+    })
+})
+
+
+//list of all alarm songs
+let radhe_radhe1 = new Audio('Alarm_Clock/radhe_radhe1.mp3');
+let radhe_radhe2 = new Audio('Alarm_Clock/radhe_radhe2.mp3');
+let radhe_radhe3 = new Audio('Alarm_Clock/radhe_radhe3.mp3');
+let radhe_radhe4 = new Audio('Alarm_Clock/radhe_radhe4.mp3');
+let radhe_radhe5 = new Audio('Alarm_Clock/radhe_radhe5.mp3');
+
+//logic of Playing Alarm on Selected time
+selectElement.addEventListener("change", (event) => {
+    for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        if (key.startsWith("Alarm")) {
+            let alarmTime = localStorage.getItem(key);
+            alarmarry.push(alarmTime);
+        }
+    }
+
+    setInterval(() => {
+        let date = new Date()
+        alarmarry.forEach((Time) => {
+            let currentTime = `${date.getHours()}:${date.getMinutes()}`;
+            if (Time === currentTime && event.target.value === "radhe_radhe1") {
+                radhe_radhe1.play();
+            }
+
+            else if (Time === currentTime && event.target.value == "radhe_radhe2") {
+                radhe_radhe2.play()
+            }
+            else if (Time === currentTime && event.target.value == "radhe_radhe3") {
+                radhe_radhe3.play()
+            }
+            else if (Time === currentTime && event.target.value == "radhe_radhe4") {
+                radhe_radhe4.play()
+            }
+            else if (Time === currentTime && event.target.value == "radhe_radhe5") {
+                radhe_radhe5.play()
+            }
+        })
+    }, 1000)
+});
 
 
 let Timmer_Hours = 0;
@@ -132,12 +212,12 @@ StopWatchBtn.addEventListener('click', () => {
     setTimeout(() => {
         StopWatchBtn.style.backgroundColor = "#000000d9";
     }, 100);
-    
+
     setTimeout(() => {
         // show the Stop watch
         StopWatchPage.style.display = "grid";
         mainContainer.style.background = "beige"
-        
+
         // hide AddingAlarm element
         AddingAlarm.style.display = "none";
 
@@ -216,48 +296,3 @@ StopWatchBtn.addEventListener('click', () => {
     })
 })
 
-
-
-//Changing bg when Buttons(Stop, Start, Reset) is clicked
-let logicBtn = document.getElementsByClassName('logicBtn')
-Array.from(logicBtn).forEach((logicBtn) => {
-    logicBtn.addEventListener('click', (e) => {
-        e.target.style.backgroundColor = "#cdc3c3"
-        setTimeout(() => {
-            e.target.style.backgroundColor = "white"
-        }, 100)
-    })
-})
-
-//list of all alarm songs
-let radhe_radhe1 = new Audio('Alarm_Clock/radhe_radhe1.mp3');
-let radhe_radhe2 = new Audio('Alarm_Clock/radhe_radhe2.mp3');
-let radhe_radhe3 = new Audio('Alarm_Clock/radhe_radhe3.mp3');
-let radhe_radhe4 = new Audio('Alarm_Clock/radhe_radhe4.mp3');
-let radhe_radhe5 = new Audio('Alarm_Clock/radhe_radhe5.mp3');
-
-//logic of Playing Alarm on Selected time
-selectElement.addEventListener("change", (event) => {
-    setInterval(() => {
-        let date = new Date()
-        alarmarry.forEach((Time) => {
-            let timehr = Time.split(":")[0]
-            let timemin = Time.split(":")[1]
-            if (timehr == date.getHours() && timemin == date.getMinutes() && event.target.value == "radhe_radhe1") {
-                radhe_radhe1.play()
-            }
-            else if (timehr == date.getHours() && timemin == date.getMinutes() && event.target.value == "radhe_radhe2") {
-                radhe_radhe2.play()
-            }
-            else if (timehr == date.getHours() && timemin == date.getMinutes() && event.target.value == "radhe_radhe3") {
-                radhe_radhe3.play()
-            }
-            else if (timehr == date.getHours() && timemin == date.getMinutes() && event.target.value == "radhe_radhe4") {
-                radhe_radhe4.play()
-            }
-            else if (timehr == date.getHours() && timemin == date.getMinutes() && event.target.value == "radhe_radhe5") {
-                radhe_radhe5.play()
-            }
-        })
-    }, 1000)
-});
